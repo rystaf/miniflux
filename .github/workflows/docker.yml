@@ -21,7 +21,6 @@ jobs:
           DOCKER_VERSION=dev-distroless
           DOCKER_VERSION=${GITHUB_REF#refs/tags/}-distroless
           TAGS="ghcr.io/${DOCKER_IMAGE}:${DOCKER_VERSION},ghcr.io/${DOCKER_IMAGE}:latest-distroless"
-          fi
           echo ::set-output name=tags::${TAGS}
 
       - name: Set up QEMU

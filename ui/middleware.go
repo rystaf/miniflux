@@ -138,10 +138,12 @@ func (m *middleware) isPublicRoute(r *http.Request) bool {
 		"oauth2Redirect",
 		"oauth2Callback",
 		"appIcon",
+		"icon",
 		"favicon",
 		"webManifest",
 		"robots",
 		"sharedEntry",
+		"reblog",
 		"healthcheck",
 		"offline",
 		"proxy":

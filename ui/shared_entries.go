@@ -6,6 +6,7 @@ package ui // import "miniflux.app/ui"
 
 import (
 	"net/http"
+	"strconv"
 
 	"miniflux.app/http/request"
 	"miniflux.app/http/response/html"
@@ -48,4 +49,35 @@ func (h *handler) sharedEntries(w http.ResponseWriter, r *http.Request) {
 	view.Set("hasSaveEntry", h.store.HasSaveEntry(user.ID))
 
 	html.OK(w, r, view.Render("shared_entries"))
+}
+
+func (h *handler) reblog(w http.ResponseWriter, r *http.Request) {
+	userID, err := strconv.ParseInt(request.RouteStringParam(r, "userID"), 10, 64)
+	if err != nil {
+		html.ServerError(w, r, err)
+		return
+	}
+	user, err := h.store.UserByID(userID)
+	if err != nil {
+		html.ServerError(w, r, err)
+		return
+	}
+
+	builder := h.store.NewEntryQueryBuilder(user.ID)
+	builder.WithShareCodeNotEmpty()
+	builder.WithOrder(user.EntryOrder)
+	builder.WithDirection("desc")
+
+	entries, err := builder.GetEntries()
+	if err != nil {
+		html.ServerError(w, r, err)
+		return
+	}
+
+	sess := session.New(h.store, request.SessionID(r))
+	view := view.New(h.tpl, r, sess)
+	view.Set("entries", entries)
+	view.Set("username", user.Username)
+
+	html.OK(w, r, view.Render("reblog"))
 }

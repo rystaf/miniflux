@@ -1,0 +1,43 @@
+{{ define "title"}}{{ .username }}'s reblog{{ end }}
+
+{{ define "content"}}
+<section class="page-header">
+  <h1>{{ .username }}'s reblog</h1>
+</section>
+
+{{ if not .entries }}
+    <p class="alert alert-info">{{ t "alert.no_shared_entry" }}</p>
+{{ else }}
+    <div class="items">
+        {{ range .entries }}
+        <article role="article" class="item entry-item {{ if $.user.EntrySwipe }}entry-swipe{{ end }} item-status-{{ .Status }}" data-id="{{ .ID }}">
+            <div class="item-header" dir="auto">
+                <span class="item-title">
+                    {{ if ne .Feed.Icon.IconID 0 }}
+                        <img src="{{ route "icon" "iconID" .Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .Feed.Title }}">
+                    {{ end }}
+                    {{ if .ShareCode }}
+                        <a href="{{ route "sharedEntry" "shareCode" .ShareCode }}"
+                            title="{{ t "entry.shared_entry.title" }}"
+                            target="_blank">{{ .Title }}</a>
+                    {{ end }}
+                </span>
+            </div>
+            <div class="item-meta">
+                <ul class="item-meta-info">
+                    <li class="item-meta-info-site-url">
+                        <a href="{{ .Feed.SiteURL }}">{{ truncate .Feed.Title 35 }}</a>
+                    </li>
+                    <li class="item-meta-info-timestamp">
+                        <time datetime="{{ isodate .Date }}" title="{{ isodate .Date }}">{{ elapsed "UTC" .Date }}</time>
+                    </li>
+                </ul>
+                <ul class="item-meta-icons">
+                </ul>
+            </div>
+        </article>
+        {{ end }}
+    </div>
+{{ end }}
+
+{{ end }}

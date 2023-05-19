@@ -93,11 +93,11 @@
                         <a href="{{ route "logout" }}" title="{{ t "tooltip.logged_user" .user.Username }}">{{ t "menu.logout" }}</a>
                     </li>
                 {{ end }}
+                <li class="search-toggle-switch {{ if $.searchQuery }}has-search-query{{ end }}">
+                    <a href="#" data-action="search">{{ t "search.label" }}</a>
+                </li>
             </ul>
             <div class="search">
-                <div class="search-toggle-switch {{ if $.searchQuery }}has-search-query{{ end }}">
-                    <a href="#" data-action="search">&laquo;&nbsp;{{ t "search.label" }}</a>
-                </div>
                 <form action="{{ route "searchEntries" }}" class="search-form {{ if $.searchQuery }}has-search-query{{ end }}">
                     <input type="search" name="q" id="search-input" placeholder="{{ t "search.placeholder" }}" {{ if $.searchQuery }}value="{{ .searchQuery }}"{{ end }} required>
                 </form>

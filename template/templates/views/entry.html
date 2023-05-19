@@ -3,9 +3,6 @@
 {{ define "content"}}
 <section class="entry" data-id="{{ .entry.ID }}">
     <header class="entry-header">
-        <h1 dir="auto">
-            <a href="{{ .entry.URL | safeURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .entry.Title }}</a>
-        </h1>
         {{ if .user }}
         <div class="entry-actions">
             <ul>
@@ -93,14 +90,33 @@
                         >{{ icon "comment" }}<span class="icon-label">{{ t "entry.comments.label" }}</span></a>
                     </li>
                 {{ end }}
+                {{ if .user }}
+                <li class="pagination-next {{ if not .nextEntry }}disabled{{end}}">
+                    {{ if .nextEntry }}
+                        <a href="{{ .nextEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .nextEntry.Title }}" data-page="next" rel="next">{{ t "pagination.next" }}</a>
+                    {{ else }}
+                        {{ t "pagination.next" }}
+                    {{ end }}
+                </li>
+                <li class="pagination-prev {{ if not .prevEntry }}disabled{{end}}">
+                    {{ if .prevEntry }}
+                        <a href="{{ .prevEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .prevEntry.Title }}" data-page="previous" rel="prev">{{ t "pagination.previous" }}</a>
+                    {{ else }}
+                        {{ t "pagination.previous" }}
+                    {{ end }}
+                </li>
+                {{ end }}
             </ul>
         </div>
         {{ end }}
         <div class="entry-meta" dir="auto">
+            {{ if and .user (ne .entry.Feed.Icon.IconID 0) }}
+            <div>
+                <img src="{{ route "icon" "iconID" .entry.Feed.Icon.IconID }}" width="64" height="64" loading="lazy" alt="{{ .entry.Feed.Title }}">
+            </div>
+            {{ end }}
+            <div>
             <span class="entry-website">
-                {{ if and .user (ne .entry.Feed.Icon.IconID 0) }}
-                    <img src="{{ route "icon" "iconID" .entry.Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .entry.Feed.Title }}">
-                {{ end }}
                 {{ if .user }}
                     <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}">{{ .entry.Feed.Title }}</a>
                 {{ else }}
@@ -110,9 +126,9 @@
             {{ if .entry.Author }}
                 <span class="entry-author">
                     {{ if isEmail .entry.Author }}
-                        - <a href="mailto:{{ .entry.Author }}">{{ .entry.Author }}</a>
+                        <a href="mailto:{{ .entry.Author }}">{{ .entry.Author }}</a>
                     {{ else }}
-                        – <em>{{ .entry.Author }}</em>
+                        <em>{{ .entry.Author }}</em>
                     {{ end }}
                 </span>
             {{ end }}
@@ -140,15 +156,21 @@
                 {{ plural "entry.estimated_reading_time" .entry.ReadingTime .entry.ReadingTime }}
             </span>
             {{ end }}
+            {{ if and false .user }}
+            <div>
+                <span class="category">
+                    <a href="{{ route "categoryEntries" "categoryID" .entry.Feed.Category.ID }}">{{ .entry.Feed.Category.Title }}</a>
+                </span>
+            </div>
+            {{ end }}
+            </div>
         </div>
+        {{ if ne .entry.Feed.Category.Title "micro" }}
+        <h1 dir="auto">
+            <a href="{{ .entry.URL | safeURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .entry.Title }}</a>
+        </h1>
+        {{ end }}
     </header>
-    {{ if gt (len .entry.Content) 120 }}
-    {{ if .user }}
-    <div class="pagination-entry-top">
-        {{ template "entry_pagination" . }}
-    </div>
-    {{ end }}
-    {{ end }}
     <article role="article" class="entry-content gesture-nav-{{ $.user.GestureNav }}" dir="auto">
         {{ if (and .entry.Enclosures (not .entry.Feed.NoMediaPlayer)) }}
             {{ range .entry.Enclosures }}
@@ -190,8 +212,6 @@
         {{ end }}
     </article>
     {{ if .entry.Enclosures }}
-    <details class="entry-enclosures">
-        <summary>{{ t "page.entry.attachments" }} ({{ len .entry.Enclosures }})</summary>
         {{ range .entry.Enclosures }}
             {{ if ne .URL "" }}
             <div class="entry-enclosure">
@@ -231,20 +251,13 @@
                     </div>
                 {{ end }}
 
-                <div class="entry-enclosure-download">
-                    <a href="{{ .URL | safeURL }}" title="{{ t "action.download" }}{{ if gt .Size 0 }} - {{ formatFileSize .Size }}{{ end }} ({{ .MimeType }})" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .URL | safeURL  }}</a>
-                    <small>{{ if gt .Size 0 }} - <strong>{{ formatFileSize .Size }}</strong>{{ end }}</small>
-                </div>
-            </div>
-            {{ end }}
-        {{ end }}
-        </details>
+              <div class="entry-enclosure-download">
+                  <a href="{{ .URL | safeURL }}" title="{{ t "action.download" }}{{ if gt .Size 0 }} - {{ formatFileSize .Size }}{{ end }} ({{ .MimeType }})" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .URL | safeURL  }}</a>
+                  <small>{{ if gt .Size 0 }} - <strong>{{ formatFileSize .Size }}</strong>{{ end }}</small>
+              </div>
+          </div>
+          {{ end }}
+      {{ end }}
     {{ end }}
 </section>
-
-{{ if .user }}
-<div class="pagination-entry-bottom">
-    {{ template "entry_pagination" . }}
-</div>
-{{ end }}
 {{ end }}

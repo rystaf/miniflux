@@ -23,7 +23,7 @@ import (
 )
 
 // FindIcon try to find the website's icon.
-func FindIcon(websiteURL, userAgent string, fetchViaProxy, allowSelfSignedCertificates bool) (*model.Icon, error) {
+func FindIcon(websiteURL, iconURL, userAgent string, fetchViaProxy, allowSelfSignedCertificates bool) (*model.Icon, error) {
 	rootURL := url.RootURL(websiteURL)
 	logger.Debug("[FindIcon] Trying to find an icon: rootURL=%q websiteURL=%q userAgent=%q", rootURL, websiteURL, userAgent)
 
@@ -44,9 +44,11 @@ func FindIcon(websiteURL, userAgent string, fetchViaProxy, allowSelfSignedCertif
 		return nil, fmt.Errorf("icon: unable to download website index page: status=%d", response.StatusCode)
 	}
 
-	iconURL, err := parseDocument(rootURL, response.Body)
-	if err != nil {
-		return nil, err
+	if iconURL == "" {
+		iconURL, err = parseDocument(rootURL, response.Body)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	if strings.HasPrefix(iconURL, "data:") {

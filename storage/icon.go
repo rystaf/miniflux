@@ -108,7 +108,7 @@ func (s *Storage) CreateFeedIcon(feedID int64, icon *model.Icon) error {
 		}
 	}
 
-	_, err = s.db.Exec(`INSERT INTO feed_icons (feed_id, icon_id) VALUES ($1, $2)`, feedID, icon.ID)
+	_, err = s.db.Exec(`INSERT INTO feed_icons (feed_id, icon_id) VALUES ($1, $2) ON CONFLICT (feed_id) DO UPDATE SET icon_id = $2`, feedID, icon.ID)
 	if err != nil {
 		return fmt.Errorf(`store: unable to create feed icon: %v`, err)
 	}

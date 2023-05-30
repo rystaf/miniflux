@@ -20,6 +20,15 @@ func (s *Storage) HasIcon(feedID int64) bool {
 	return result
 }
 
+func (s *Storage) HasIconHash(feedID int64, iconHash string) bool {
+	var result bool
+	query := `SELECT true FROM feed_icons
+	LEFT JOIN icons ON feed_icons.icon_id=icons.id
+	WHERE feed_id=$1 AND icons.hash=$2`
+	s.db.QueryRow(query, feedID).Scan(&result)
+	return result
+}
+
 // IconByID returns an icon by the ID.
 func (s *Storage) IconByID(iconID int64) (*model.Icon, error) {
 	var icon model.Icon
@@ -108,7 +117,7 @@ func (s *Storage) CreateFeedIcon(feedID int64, icon *model.Icon) error {
 		}
 	}
 
-	_, err = s.db.Exec(`INSERT INTO feed_icons (feed_id, icon_id) VALUES ($1, $2)`, feedID, icon.ID)
+	_, err = s.db.Exec(`INSERT INTO feed_icons (feed_id, icon_id) VALUES ($1, $2) ON CONFLICT (feed_id) DO UPDATE SET icon_id = $2`, feedID, icon.ID)
 	if err != nil {
 		return fmt.Errorf(`store: unable to create feed icon: %v`, err)
 	}

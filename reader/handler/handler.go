@@ -210,16 +210,14 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64) error {
 }
 
 func checkFeedIcon(store *storage.Storage, feedID int64, websiteURL, iconURL, userAgent string, fetchViaProxy, allowSelfSignedCertificates bool) {
-	if !store.HasIcon(feedID) {
-		icon, err := icon.FindIcon(websiteURL, iconURL, userAgent, fetchViaProxy, allowSelfSignedCertificates)
-		if err != nil {
+	icon, err := icon.FindIcon(websiteURL, iconURL, userAgent, fetchViaProxy, allowSelfSignedCertificates)
+	if err != nil {
+		logger.Debug(`[CheckFeedIcon] %v (feedID=%d websiteURL=%s)`, err, feedID, websiteURL)
+	} else if icon == nil {
+		logger.Debug(`[CheckFeedIcon] No icon found (feedID=%d websiteURL=%s)`, feedID, websiteURL)
+	} else if !store.HasIconHash(feedID, icon.Hash) {
+		if err := store.CreateFeedIcon(feedID, icon); err != nil {
 			logger.Debug(`[CheckFeedIcon] %v (feedID=%d websiteURL=%s)`, err, feedID, websiteURL)
-		} else if icon == nil {
-			logger.Debug(`[CheckFeedIcon] No icon found (feedID=%d websiteURL=%s)`, feedID, websiteURL)
-		} else {
-			if err := store.CreateFeedIcon(feedID, icon); err != nil {
-				logger.Debug(`[CheckFeedIcon] %v (feedID=%d websiteURL=%s)`, err, feedID, websiteURL)
-			}
 		}
 	}
 }

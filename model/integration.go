@@ -48,4 +48,6 @@ type Integration struct {
 	MatrixBotPassword    string
 	MatrixBotURL         string
 	MatrixBotChatID      string
+	RSSBridgeEnabled     bool
+	RSSBridgeURL         string
 }

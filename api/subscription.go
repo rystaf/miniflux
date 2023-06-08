@@ -8,6 +8,7 @@ import (
 	json_parser "encoding/json"
 	"net/http"
 
+	"miniflux.app/http/request"
 	"miniflux.app/http/response/json"
 	"miniflux.app/model"
 	"miniflux.app/reader/subscription"
@@ -26,6 +27,12 @@ func (h *handler) discoverSubscriptions(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	var rssbridgeURL string
+	intg, err := h.store.Integration(request.UserID(r))
+	if err == nil && intg != nil && intg.RSSBridgeEnabled {
+		rssbridgeURL = intg.RSSBridgeURL
+	}
+
 	subscriptions, finderErr := subscription.FindSubscriptions(
 		subscriptionDiscoveryRequest.URL,
 		subscriptionDiscoveryRequest.UserAgent,
@@ -34,6 +41,7 @@ func (h *handler) discoverSubscriptions(w http.ResponseWriter, r *http.Request) 
 		subscriptionDiscoveryRequest.Password,
 		subscriptionDiscoveryRequest.FetchViaProxy,
 		subscriptionDiscoveryRequest.AllowSelfSignedCertificates,
+		rssbridgeURL,
 	)
 	if finderErr != nil {
 		json.ServerError(w, r, finderErr)

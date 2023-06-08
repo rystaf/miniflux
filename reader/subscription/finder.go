@@ -13,6 +13,7 @@ import (
 	"miniflux.app/config"
 	"miniflux.app/errors"
 	"miniflux.app/http/client"
+	"miniflux.app/integration/rssbridge"
 	"miniflux.app/reader/browser"
 	"miniflux.app/reader/parser"
 	"miniflux.app/url"
@@ -27,7 +28,7 @@ var (
 )
 
 // FindSubscriptions downloads and try to find one or more subscriptions from an URL.
-func FindSubscriptions(websiteURL, userAgent, cookie, username, password string, fetchViaProxy, allowSelfSignedCertificates bool) (Subscriptions, *errors.LocalizedError) {
+func FindSubscriptions(websiteURL, userAgent, cookie, username, password string, fetchViaProxy, allowSelfSignedCertificates bool, rssbridgeURL string) (Subscriptions, *errors.LocalizedError) {
 	websiteURL = findYoutubeChannelFeed(websiteURL)
 	websiteURL = parseYoutubeVideoPage(websiteURL)
 
@@ -47,23 +48,42 @@ func FindSubscriptions(websiteURL, userAgent, cookie, username, password string,
 	}
 
 	body := response.BodyAsString()
+	var subscriptions Subscriptions
 	if format := parser.DetectFeedFormat(body); format != parser.FormatUnknown {
-		var subscriptions Subscriptions
 		subscriptions = append(subscriptions, &Subscription{
 			Title: response.EffectiveURL,
 			URL:   response.EffectiveURL,
 			Type:  format,
 		})
-
-		return subscriptions, nil
 	}
 
-	subscriptions, err := parseWebPage(response.EffectiveURL, strings.NewReader(body))
-	if err != nil || subscriptions != nil {
-		return subscriptions, err
+	if subscriptions == nil {
+		subscriptions, err = parseWebPage(response.EffectiveURL, strings.NewReader(body))
+		if err != nil {
+			return subscriptions, err
+		}
 	}
 
-	return tryWellKnownUrls(websiteURL, userAgent, cookie, username, password)
+	if subscriptions == nil {
+		subscriptions, err = tryWellKnownUrls(websiteURL, userAgent, cookie, username, password)
+		if err != nil {
+			return subscriptions, err
+		}
+	}
+
+	if rssbridgeURL != "" {
+		body, err := rssbridge.DetectBridge(rssbridgeURL, websiteURL)
+		if err != nil {
+			return subscriptions, err
+		}
+		rssbridgeSubs, err := parseWebPage(rssbridgeURL, strings.NewReader(body))
+		if err != nil {
+			return subscriptions, err
+		}
+		subscriptions = append(subscriptions, rssbridgeSubs...)
+	}
+
+	return subscriptions, err
 }
 
 func parseWebPage(websiteURL string, data io.Reader) (Subscriptions, *errors.LocalizedError) {

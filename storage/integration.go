@@ -155,7 +155,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			matrix_bot_user,
 			matrix_bot_password,
 			matrix_bot_url,
-			matrix_bot_chat_id
+			matrix_bot_chat_id,
+			rssbridge_enabled,
+			rssbridge_url
 		FROM
 			integrations
 		WHERE
@@ -210,6 +212,8 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.MatrixBotPassword,
 		&integration.MatrixBotURL,
 		&integration.MatrixBotChatID,
+		&integration.RSSBridgeEnabled,
+		&integration.RSSBridgeURL,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -273,8 +277,10 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			notion_enabled=$44,
 			notion_token=$45,
 			notion_page_id=$46
+			rssbridge_enabled=$47
+			rssbridge_url=$48
 		WHERE
-			user_id=$47
+			user_id=$49
 	`
 	_, err := s.db.Exec(
 		query,
@@ -324,6 +330,8 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		integration.NotionEnabled,
 		integration.NotionToken,
 		integration.NotionPageID,
+		integration.RSSBridgeEnabled,
+		integration.RSSBridgeURL,
 		integration.UserID,
 	)
 

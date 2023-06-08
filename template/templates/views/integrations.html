@@ -259,6 +259,20 @@
         </div>
     </div>
 
+    <h3>RSS-Bridge</h3>
+    <div class="form-section">
+        <label>
+            <input type="checkbox" name="rssbridge_enabled" value="1" {{ if .form.RSSBridgeEnabled }}checked{{ end }}> {{ t "form.integration.rssbridge_activate" }}
+        </label>
+
+        <label for="form-rssbridge-url">{{ t "form.integration.rssbridge_url" }}</label>
+        <input type="text" name="rssbridge_url" id="form-rssbridge-url" value="{{ .form.RSSBridgeURL }}" spellcheck="false">
+
+        <div class="buttons">
+            <button type="submit" class="button button-primary" data-label-loading="{{ t "form.submit.saving" }}">{{ t "action.update" }}</button>
+        </div>
+    </div>
+
 </form>
 
 <h3>{{ t "page.integration.bookmarklet" }}</h3>

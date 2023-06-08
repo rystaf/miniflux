@@ -52,6 +52,14 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var rssbridgeURL string
+	intg, err := h.store.Integration(user.ID)
+	if err != nil {
+		logger.Error("[UI:SubmitSubscription] Get integrations for user %d failed: %v", user.ID, err)
+	} else if intg != nil && intg.RSSBridgeEnabled {
+		rssbridgeURL = intg.RSSBridgeURL
+	}
+
 	subscriptions, findErr := subscription.FindSubscriptions(
 		subscriptionForm.URL,
 		subscriptionForm.UserAgent,
@@ -60,24 +68,25 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		subscriptionForm.Password,
 		subscriptionForm.FetchViaProxy,
 		subscriptionForm.AllowSelfSignedCertificates,
+		rssbridgeURL,
 	)
-	if findErr != nil {
-		logger.Error("[UI:SubmitSubscription] %q -> %s", subscriptionForm.URL, findErr)
-		v.Set("form", subscriptionForm)
-		v.Set("errorMessage", findErr)
-		html.OK(w, r, v.Render("add_subscription"))
-		return
-	}
 
 	logger.Debug("[UI:SubmitSubscription] %s", subscriptions)
+	if findErr != nil {
+		logger.Error("[UI:SubmitSubscription] %q -> %s", subscriptionForm.URL, findErr)
+	}
 
 	n := len(subscriptions)
 	switch {
 	case n == 0:
 		v.Set("form", subscriptionForm)
-		v.Set("errorMessage", "error.subscription_not_found")
+		if findErr != nil {
+			v.Set("errorMessage", findErr)
+		} else {
+			v.Set("errorMessage", "error.subscription_not_found")
+		}
 		html.OK(w, r, v.Render("add_subscription"))
-	case n == 1:
+	case n == 1 && findErr == nil:
 		feed, err := feedHandler.CreateFeed(h.store, user.ID, &model.FeedCreationRequest{
 			CategoryID:                  subscriptionForm.CategoryID,
 			FeedURL:                     subscriptions[0].URL,
@@ -102,8 +111,11 @@ func (h *handler) submitSubscription(w http.ResponseWriter, r *http.Request) {
 		}
 
 		html.Redirect(w, r, route.Path(h.router, "feedEntries", "feedID", feed.ID))
-	case n > 1:
+	default:
 		v := view.New(h.tpl, r, sess)
+		if findErr != nil {
+			v.Set("errorMessage", findErr)
+		}
 		v.Set("subscriptions", subscriptions)
 		v.Set("form", subscriptionForm)
 		v.Set("menu", "feeds")

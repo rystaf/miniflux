@@ -151,7 +151,9 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 			matrix_bot_user,
 			matrix_bot_password,
 			matrix_bot_url,
-			matrix_bot_chat_id
+			matrix_bot_chat_id,
+			rssbridge_enabled,
+			rssbridge_url
 		FROM
 			integrations
 		WHERE
@@ -201,6 +203,8 @@ func (s *Storage) Integration(userID int64) (*model.Integration, error) {
 		&integration.MatrixBotPassword,
 		&integration.MatrixBotURL,
 		&integration.MatrixBotChatID,
+		&integration.RSSBridgeEnabled,
+		&integration.RSSBridgeURL,
 	)
 	switch {
 	case err == sql.ErrNoRows:
@@ -265,8 +269,10 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			matrix_bot_password=$39,
 			matrix_bot_url=$40,
 			matrix_bot_chat_id=$41
+			rssbridge_enabled=$42
+			rssbridge_url=$43
 		WHERE
-			user_id=$42
+			user_id=$44
 	`
 		_, err = s.db.Exec(
 			query,
@@ -311,6 +317,8 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.MatrixBotPassword,
 			integration.MatrixBotURL,
 			integration.MatrixBotChatID,
+			integration.RSSBridgeEnabled,
+			integration.RSSBridgeURL,
 			integration.UserID,
 		)
 	} else {
@@ -358,9 +366,11 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 		matrix_bot_user=$38,
 		matrix_bot_password=$39,
 		matrix_bot_url=$40,
-		matrix_bot_chat_id=$41
+		matrix_bot_chat_id=$41,
+		rssbridge_enabled=$42,
+		rssbridge_url=$43
 	WHERE
-		user_id=$42
+		user_id=$44
 	`
 		_, err = s.db.Exec(
 			query,
@@ -405,6 +415,8 @@ func (s *Storage) UpdateIntegration(integration *model.Integration) error {
 			integration.MatrixBotPassword,
 			integration.MatrixBotURL,
 			integration.MatrixBotChatID,
+			integration.RSSBridgeEnabled,
+			integration.RSSBridgeURL,
 			integration.UserID,
 		)
 	}

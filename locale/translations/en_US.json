@@ -366,6 +366,8 @@
     "form.integration.matrix_bot_password": "Password for Matrix user",
     "form.integration.matrix_bot_url": "Matrix server URL",
     "form.integration.matrix_bot_chat_id": "ID of Matrix Room",
+    "form.integration.rssbridge_activate": "Check RSS-Bridge for feeds",
+    "form.integration.rssbridge_url": "RSS-Bridge server URL",
     "form.api_key.label.description": "API Key Label",
     "form.submit.loading": "Loading…",
     "form.submit.saving": "Saving…",

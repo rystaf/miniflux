@@ -3,9 +3,6 @@
 {{ define "content"}}
 <section class="entry" data-id="{{ .entry.ID }}">
     <header class="entry-header">
-        <h1 dir="auto">
-            <a href="{{ .entry.URL | safeURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .entry.Title }}</a>
-        </h1>
         {{ if .user }}
         <div class="entry-actions">
             <ul>
@@ -95,42 +92,62 @@
                         >{{ icon "comment" }}<span class="icon-label">{{ t "entry.comments.label" }}</span></a>
                     </li>
                 {{ end }}
+                {{ if .user }}
+                    <li class="pagination-next {{ if not .nextEntry }}disabled{{end}}">
+                        {{ if .nextEntry }}
+                            <a href="{{ .nextEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .nextEntry.Title }}" data-page="next" rel="next">{{ t "pagination.next" }}</a>
+
+                        {{ else }}
+                            {{ t "pagination.next" }}
+                        {{ end }}
+                    </li>
+                    <li class="pagination-prev {{ if not .prevEntry }}disabled{{end}}">
+                        {{ if .prevEntry }}
+                            <a href="{{ .prevEntryRoute }}{{ if .searchQuery }}?q={{ .searchQuery }}{{ end }}" title="{{ .prevEntry.Title }}" data-page="previous" rel="prev">{{ t "pagination.previous" }}</a>
+                        {{ else }}
+                            {{ t "pagination.previous" }}
+                        {{ end }}
+                    </li>
+                {{ end }}
             </ul>
         </div>
         {{ end }}
         <div class="entry-meta" dir="auto">
-            <span class="entry-website">
-                {{ if and .user (ne .entry.Feed.Icon.IconID 0) }}
-                    <img src="{{ route "icon" "iconID" .entry.Feed.Icon.IconID }}" width="16" height="16" loading="lazy" alt="{{ .entry.Feed.Title }}">
-                {{ end }}
-                {{ if .user }}
-                    <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}">{{ .entry.Feed.Title }}</a>
-                {{ else }}
-                    <a href="{{ .entry.Feed.SiteURL | safeURL }}">{{ .entry.Feed.Title }}</a>
-                {{ end }}
-            </span>
+            {{ if and .user (ne .entry.Feed.Icon.IconID 0) }}
+                <div>
+                    <img src="{{ route "icon" "iconID" .entry.Feed.Icon.IconID }}" width="64" height="64" loading="lazy" alt="{{ .entry.Feed.Title }}">
+                </div>
+            {{ end }}
+            <div>
+              <span>
+                  <span class="entry-website">
+                      {{ if .user }}
+                          <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}">{{ .entry.Feed.Title }}</a>
+                      {{ else }}
+                          <a href="{{ .entry.Feed.SiteURL | safeURL }}">{{ .entry.Feed.Title }}</a>
+                      {{ end }}
+                      </span>
+                      {{ if .user }}
+                          <span class="category">
+                              <a href="{{ route "categoryEntries" "categoryID" .entry.Feed.Category.ID }}">{{ .entry.Feed.Category.Title }}</a>
+                          </span>
+                      {{ end }}
+                </span>
             {{ if .entry.Author }}
                 <span class="entry-author">
                     {{ if isEmail .entry.Author }}
-                        - <a href="mailto:{{ .entry.Author }}">{{ .entry.Author }}</a>
+                        <a href="mailto:{{ .entry.Author }}">{{ .entry.Author }}</a>
                     {{ else }}
-                        – <em>{{ .entry.Author }}</em>
+                        <em>{{ .entry.Author }}</em>
                     {{ end }}
                 </span>
             {{ end }}
-            {{ if .user }}
-                <span class="category">
-                    <a href="{{ route "categoryEntries" "categoryID" .entry.Feed.Category.ID }}">{{ .entry.Feed.Category.Title }}</a>
-                </span>
+            {{ if .entry.Tags }}
+                <div class="entry-tags">
+                    {{ t "entry.tags.label" }}
+                    {{range $i, $e := .entry.Tags}}{{if $i}}, {{end}}<strong>{{ $e }}</strong>{{end}}
+                </div>
             {{ end }}
-        </div>
-        {{ if .entry.Tags }}
-            <div class="entry-tags">
-                {{ t "entry.tags.label" }}
-                {{range $i, $e := .entry.Tags}}{{if $i}}, {{end}}<strong>{{ $e }}</strong>{{end}}
-            </div>
-        {{ end }}
-        <div class="entry-date">
             {{ if .user }}
                 <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed $.user.Timezone .entry.Date }}</time>
             {{ else }}
@@ -143,14 +160,11 @@
             </span>
             {{ end }}
         </div>
+        </div>
+        <h1 dir="auto">
+            <a href="{{ .entry.URL | safeURL }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .entry.Title }}</a>
+        </h1>
     </header>
-    {{ if gt (len .entry.Content) 120 }}
-    {{ if .user }}
-    <div class="pagination-entry-top">
-        {{ template "entry_pagination" . }}
-    </div>
-    {{ end }}
-    {{ end }}
     <article role="article" class="entry-content gesture-nav-{{ $.user.GestureNav }}" dir="auto">
         {{ if (and .entry.Enclosures (not .entry.Feed.NoMediaPlayer)) }}
             {{ range .entry.Enclosures }}
@@ -244,9 +258,4 @@
     {{ end }}
 </section>
 
-{{ if .user }}
-<div class="pagination-entry-bottom">
-    {{ template "entry_pagination" . }}
-</div>
-{{ end }}
 {{ end }}

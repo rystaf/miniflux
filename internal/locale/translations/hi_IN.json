@@ -289,6 +289,7 @@
     "form.feed.label.disabled": "इस फ़ीड को रीफ़्रेश न करें",
     "form.feed.label.no_media_player": "No media player (audio/video)",
     "form.feed.label.hide_globally": "वैश्विक अपठित सूची में प्रविष्टियां छिपाएं",
+    "form.feed.label.refresh_icon": "Refresh icon",
     "form.feed.fieldset.general": "General",
     "form.feed.fieldset.rules": "Rules",
     "form.feed.fieldset.network_settings": "Network Settings",

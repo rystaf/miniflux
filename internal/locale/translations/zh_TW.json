@@ -289,6 +289,7 @@
     "form.feed.label.disabled": "請勿重新整理此Feed",
     "form.feed.label.no_media_player": "No media player (audio/video)",
     "form.feed.label.hide_globally": "隱藏全域性未讀列表中的文章",
+    "form.feed.label.refresh_icon": "Refresh icon",
     "form.feed.fieldset.general": "General",
     "form.feed.fieldset.rules": "Rules",
     "form.feed.fieldset.network_settings": "Network Settings",

@@ -212,15 +212,17 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 		// because some websites don't return the same headers when replying with a 304.
 		originalFeed.WithClientResponse(response)
 
-		checkFeedIcon(
-			store,
-			originalFeed.ID,
-			originalFeed.SiteURL,
-			updatedFeed.IconURL,
-			originalFeed.UserAgent,
-			originalFeed.FetchViaProxy,
-			originalFeed.AllowSelfSignedCertificates,
-		)
+		if !store.HasIcon(originalFeed.ID) || originalFeed.RefreshIcon || forceRefresh {
+			checkFeedIcon(
+				store,
+				originalFeed.ID,
+				originalFeed.SiteURL,
+				updatedFeed.IconURL,
+				originalFeed.UserAgent,
+				originalFeed.FetchViaProxy,
+				originalFeed.AllowSelfSignedCertificates,
+			)
+		}
 	} else {
 		slog.Debug("Feed not modified",
 			slog.Int64("user_id", userID),
@@ -240,30 +242,28 @@ func RefreshFeed(store *storage.Storage, userID, feedID int64, forceRefresh bool
 }
 
 func checkFeedIcon(store *storage.Storage, feedID int64, websiteURL, feedIconURL, userAgent string, fetchViaProxy, allowSelfSignedCertificates bool) {
-	if !store.HasIcon(feedID) {
-		icon, err := icon.FindIcon(websiteURL, feedIconURL, userAgent, fetchViaProxy, allowSelfSignedCertificates)
-		if err != nil {
-			slog.Warn("Unable to find feed icon",
+	icon, err := icon.FindIcon(websiteURL, feedIconURL, userAgent, fetchViaProxy, allowSelfSignedCertificates)
+	if err != nil {
+		slog.Warn("Unable to find feed icon",
+			slog.Int64("feed_id", feedID),
+			slog.String("website_url", websiteURL),
+			slog.String("feed_icon_url", feedIconURL),
+			slog.Any("error", err),
+		)
+	} else if icon == nil {
+		slog.Debug("No icon found",
+			slog.Int64("feed_id", feedID),
+			slog.String("website_url", websiteURL),
+			slog.String("feed_icon_url", feedIconURL),
+		)
+	} else if !store.HasIconHash(feedID, icon.Hash) {
+		if err := store.CreateFeedIcon(feedID, icon); err != nil {
+			slog.Error("Unable to store feed icon",
 				slog.Int64("feed_id", feedID),
 				slog.String("website_url", websiteURL),
 				slog.String("feed_icon_url", feedIconURL),
 				slog.Any("error", err),
 			)
-		} else if icon == nil {
-			slog.Debug("No icon found",
-				slog.Int64("feed_id", feedID),
-				slog.String("website_url", websiteURL),
-				slog.String("feed_icon_url", feedIconURL),
-			)
-		} else {
-			if err := store.CreateFeedIcon(feedID, icon); err != nil {
-				slog.Error("Unable to store feed icon",
-					slog.Int64("feed_id", feedID),
-					slog.String("website_url", websiteURL),
-					slog.String("feed_icon_url", feedIconURL),
-					slog.Any("error", err),
-				)
-			}
 		}
 	}
 }

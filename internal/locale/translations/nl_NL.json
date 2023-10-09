@@ -289,6 +289,7 @@
     "form.feed.label.disabled": "Vernieuw deze feed niet",
     "form.feed.label.no_media_player": "No media player (audio/video)",
     "form.feed.label.hide_globally": "Verberg items in de globale ongelezen lijst",
+    "form.feed.label.refresh_icon": "Refresh icon",
     "form.feed.fieldset.general": "General",
     "form.feed.fieldset.rules": "Rules",
     "form.feed.fieldset.network_settings": "Network Settings",

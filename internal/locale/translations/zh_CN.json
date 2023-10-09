@@ -287,6 +287,7 @@
     "form.feed.label.disabled": "请勿刷新此源",
     "form.feed.label.no_media_player": "No media player (audio/video)",
     "form.feed.label.hide_globally": "隐藏全局未读列表中的文章",
+    "form.feed.label.refresh_icon": "Refresh icon",
     "form.feed.fieldset.general": "General",
     "form.feed.fieldset.rules": "Rules",
     "form.feed.fieldset.network_settings": "Network Settings",

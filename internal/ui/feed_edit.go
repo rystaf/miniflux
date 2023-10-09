@@ -62,6 +62,7 @@ func (h *handler) showEditFeedPage(w http.ResponseWriter, r *http.Request) {
 		HideGlobally:                feed.HideGlobally,
 		CategoryHidden:              feed.Category.HideGlobally,
 		AppriseServiceURLs:          feed.AppriseServiceURLs,
+		RefreshIcon:                 feed.RefreshIcon,
 	}
 
 	sess := session.New(h.store, request.SessionID(r))

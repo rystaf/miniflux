@@ -291,6 +291,7 @@
     "form.feed.label.disabled": "Nie odświeżaj tego kanału",
     "form.feed.label.no_media_player": "No media player (audio/video)",
     "form.feed.label.hide_globally": "Ukryj wpisy na globalnej liście nieprzeczytanych",
+    "form.feed.label.refresh_icon": "Refresh icon",
     "form.feed.fieldset.general": "General",
     "form.feed.fieldset.rules": "Rules",
     "form.feed.fieldset.network_settings": "Network Settings",

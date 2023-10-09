@@ -57,6 +57,7 @@ type Feed struct {
 	UnreadCount                 int       `json:"-"`
 	ReadCount                   int       `json:"-"`
 	AppriseServiceURLs          string    `json:"apprise_service_urls"`
+	RefreshIcon                 bool      `json:"refresh_icon"`
 }
 
 type FeedCounters struct {

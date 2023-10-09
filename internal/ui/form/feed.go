@@ -34,6 +34,7 @@ type FeedForm struct {
 	HideGlobally                bool
 	CategoryHidden              bool // Category has "hide_globally"
 	AppriseServiceURLs          string
+	RefreshIcon                 bool
 }
 
 // Merge updates the fields of the given feed.
@@ -61,6 +62,7 @@ func (f FeedForm) Merge(feed *model.Feed) *model.Feed {
 	feed.NoMediaPlayer = f.NoMediaPlayer
 	feed.HideGlobally = f.HideGlobally
 	feed.AppriseServiceURLs = f.AppriseServiceURLs
+	feed.RefreshIcon = f.RefreshIcon
 	return feed
 }
 
@@ -92,5 +94,6 @@ func NewFeedForm(r *http.Request) *FeedForm {
 		NoMediaPlayer:               r.FormValue("no_media_player") == "1",
 		HideGlobally:                r.FormValue("hide_globally") == "1",
 		AppriseServiceURLs:          r.FormValue("apprise_service_urls"),
+		RefreshIcon:                 r.FormValue("refresh_icon") == "1",
 	}
 }

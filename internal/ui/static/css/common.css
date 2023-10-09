@@ -681,6 +681,10 @@ template {
     content: " »";
 }
 
+li.pagination-next, li.pagination-prev {
+    float: right;
+}
+
 .pagination a {
     color: var(--pagination-link-color);
 }
@@ -854,6 +858,13 @@ article.category-has-unread {
     margin: 0 0 20px;
     color: #666;
     overflow-wrap: break-word;
+    display: flex;
+}
+
+.entry-meta > div:last-child {
+  display: flex;
+  flex-direction: column;
+  margin-left: .5em;
 }
 
 .entry-tags {
@@ -870,7 +881,6 @@ article.category-has-unread {
 }
 
 .entry-website a {
-    color: #666;
     vertical-align: top;
     text-decoration: none;
 }

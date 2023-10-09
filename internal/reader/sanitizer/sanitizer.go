@@ -397,6 +397,7 @@ func getTagAllowList() map[string][]string {
 	whitelist["h5"] = []string{"id"}
 	whitelist["h6"] = []string{"id"}
 	whitelist["strong"] = []string{}
+	whitelist["b"] = []string{}
 	whitelist["em"] = []string{}
 	whitelist["code"] = []string{}
 	whitelist["pre"] = []string{}

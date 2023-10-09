@@ -292,6 +292,7 @@
     "form.feed.label.disabled": "Не оновлювати цю стрічку",
     "form.feed.label.no_media_player": "No media player (audio/video)",
     "form.feed.label.hide_globally": "Приховати записи в глобальному списку непрочитаного",
+    "form.feed.label.refresh_icon": "Refresh icon",
     "form.category.label.title": "Назва",
     "form.category.hide_globally": "Приховати записи в глобальному списку непрочитаного",
     "form.feed.fieldset.general": "General",

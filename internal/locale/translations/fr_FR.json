@@ -289,6 +289,7 @@
     "form.feed.label.disabled": "Ne pas actualiser ce flux",
     "form.feed.label.no_media_player": "Pas de lecteur multimedia (audio/vidéo)",
     "form.feed.label.hide_globally": "Masquer les entrées dans la liste globale non lue",
+    "form.feed.label.refresh_icon": "Refresh icon",
     "form.feed.fieldset.general": "Général",
     "form.feed.fieldset.rules": "Règles",
     "form.feed.fieldset.network_settings": "Paramètres réseau",

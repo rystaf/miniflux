@@ -783,4 +783,13 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE public.feed_icons DROP CONSTRAINT feed_icons_pkey;
+			ALTER TABLE public.feed_icons ADD CONSTRAINT feed_icons_pkey PRIMARY KEY (feed_id);
+			ALTER TABLE feeds ADD COLUMN refresh_icon bool default 'f';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

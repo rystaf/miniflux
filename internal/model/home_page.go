@@ -11,5 +11,6 @@ func HomePages() map[string]string {
 		"history":    "menu.history",
 		"feeds":      "menu.feeds",
 		"categories": "menu.categories",
+		"inline":     "menu.inline",
 	}
 }

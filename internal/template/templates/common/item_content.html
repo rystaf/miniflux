@@ -1,0 +1,225 @@
+{{ define "item_content"}}
+<section class="entry" data-id="{{ .entry.ID }}">
+        <div class="entry-meta" dir="auto">
+            {{ if and .user (ne .entry.Feed.Icon.IconID 0) }}
+                <div>
+                    <img src="{{ route "icon" "iconID" .entry.Feed.Icon.IconID }}" width="64" height="64" loading="lazy" alt="{{ .entry.Feed.Title }}">
+                </div>
+            {{ end }}
+            <div>
+              <div>
+                  <strong class="entry-website">
+                      {{ if .user }}
+                          <a href="{{ route "feedEntries" "feedID" .entry.Feed.ID }}">{{ .entry.Feed.Title }}</a>
+                      {{ else }}
+                          <a href="{{ .entry.Feed.SiteURL | safeURL }}">{{ .entry.Feed.Title }}</a>
+                      {{ end }}
+                  </strong>
+                      {{ if .entry.Author }}
+                          <span class="entry-author">
+                              {{ if isEmail .entry.Author }}
+                                  <a href="mailto:{{ .entry.Author }}">{{ .entry.Author }}</a>
+                              {{ else }}
+                                  <em>{{ .entry.Author }}</em>
+                              {{ end }}
+                          </span>
+                      {{ end }}
+                      {{ if .user }}
+                          <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed $.user.Timezone .entry.Date }}</time>
+                      {{ else }}
+                          <time datetime="{{ isodate .entry.Date }}" title="{{ isodate .entry.Date }}">{{ elapsed "UTC" .entry.Date }}</time>
+                      {{ end }}
+                  </span>
+                  {{ if and .user.ShowReadingTime (gt .entry.ReadingTime 0) }}
+                  &centerdot;
+                  <span class="entry-reading-time">
+                      {{ plural "entry.estimated_reading_time" .entry.ReadingTime .entry.ReadingTime }}
+                  </span>
+                  {{ end }}
+              </div>
+        {{ if ne .entry.Feed.Category.Title "micro" }}
+        <header>
+        <h1 dir="auto">
+            <a href="{{ route "unreadEntry" "entryID" .entry.ID }}">{{ .entry.Title }}</a>
+        </h1>
+        </header>
+        {{ end }}
+    <article role="article" class="entry-content gesture-nav-{{ $.user.GestureNav }}" dir="auto">
+        {{ if (and .entry.Enclosures (not .entry.Feed.NoMediaPlayer)) }}
+            {{ range .entry.Enclosures }}
+                {{ if ne .URL "" }}
+                    {{ if hasPrefix .MimeType "audio/" }}
+                    <div class="enclosure-audio" >
+                        <audio controls preload="metadata"
+                               data-last-position="{{ .MediaProgression }}"
+                               data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"
+                        >
+                            {{ if (and $.user (mustBeProxyfied "audio")) }}
+                            <source src="{{ proxyURL .URL }}" type="{{ .Html5MimeType }}">
+                            {{ else }}
+                            <source src="{{ .URL | safeURL }}" type="{{ .Html5MimeType }}">
+                            {{ end }}
+                        </audio>
+                    </div>
+                    {{ else if hasPrefix .MimeType "video/" }}
+                    <div class="enclosure-video">
+                        <video controls preload="metadata"
+                               data-last-position="{{ .MediaProgression }}"
+                               data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"
+                        >
+                            {{ if (and $.user (mustBeProxyfied "video")) }}
+                            <source src="{{ proxyURL .URL }}" type="{{ .Html5MimeType }}">
+                            {{ else }}
+                            <source src="{{ .URL | safeURL }}" type="{{ .Html5MimeType }}">
+                            {{ end }}
+                        </video>
+                    </div>
+                    {{ end }}
+                {{ end }}
+            {{ end }}
+        {{end}}
+        {{ if .user }}
+            {{ noescape (proxyFilter .entry.Content) }}
+        {{ else }}
+            {{ noescape .entry.Content }}
+        {{ end }}
+    </article>
+            </div>
+        </div>
+    {{ if .entry.Enclosures }}
+    <details class="entry-enclosures">
+        <summary>{{ t "page.entry.attachments" }} ({{ len .entry.Enclosures }})</summary>
+        {{ range .entry.Enclosures }}
+            {{ if ne .URL "" }}
+            <div class="entry-enclosure">
+                {{ if hasPrefix .MimeType "audio/" }}
+                    <div class="enclosure-audio">
+                        <audio controls preload="metadata"
+                               data-last-position="{{ .MediaProgression }}"
+                               data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"
+                        >
+				{{ if (and $.user (mustBeProxyfied "audio")) }}
+				    <source src="{{ proxyURL .URL }}" type="{{ .Html5MimeType }}">
+				{{ else }}
+				    <source src="{{ .URL | safeURL }}" type="{{ .Html5MimeType }}">
+				{{ end }}
+                        </audio>
+                    </div>
+                {{ else if hasPrefix .MimeType "video/" }}
+                    <div class="enclosure-video">
+                        <video controls preload="metadata"
+                               data-last-position="{{ .MediaProgression }}"
+                               data-save-url="{{ route "saveEnclosureProgression" "enclosureID" .ID }}"
+                        >
+				{{ if (and $.user (mustBeProxyfied "video")) }}
+				    <source src="{{ proxyURL .URL }}" type="{{ .Html5MimeType }}">
+				{{ else }}
+				    <source src="{{ .URL | safeURL }}" type="{{ .Html5MimeType }}">
+				{{ end }}
+                        </video>
+                    </div>
+                {{ else if hasPrefix .MimeType "image/" }}
+                    <div class="enclosure-image">
+                        {{ if (and $.user (mustBeProxyfied "image")) }}
+                            <img src="{{ proxyURL .URL }}" title="{{ .URL }} ({{ .MimeType }})" loading="lazy" alt="{{ .URL }} ({{ .MimeType }})">
+                        {{ else }}
+                            <img src="{{ .URL | safeURL }}" title="{{ .URL }} ({{ .MimeType }})" loading="lazy" alt="{{ .URL }} ({{ .MimeType }})">
+                        {{ end }}
+                    </div>
+                {{ end }}
+
+                <div class="entry-enclosure-download">
+                    <a href="{{ .URL | safeURL }}" title="{{ t "action.download" }}{{ if gt .Size 0 }} - {{ formatFileSize .Size }}{{ end }} ({{ .MimeType }})" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .URL | safeURL  }}</a>
+                    <small>{{ if gt .Size 0 }} - <strong>{{ formatFileSize .Size }}</strong>{{ end }}</small>
+                </div>
+            </div>
+            {{ end }}
+        {{ end }}
+        </details>
+    {{ end }}
+</section>
+
+<div class="item-meta">
+    <ul class="item-meta-icons">
+        <li class="item-meta-icons-read">
+            <a href="#"
+                title="{{ t "entry.status.title" }}"
+                data-toggle-status="true"
+                data-label-loading="{{ t "entry.state.saving" }}"
+                data-label-read="{{ t "entry.status.read" }}"
+                data-label-unread="{{ t "entry.status.unread" }}"
+                data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
+                >{{ if eq .entry.Status "read" }}{{ icon "unread" }}{{ else }}{{ icon "read" }}{{ end }}<span class="icon-label">{{ if eq .entry.Status "read" }}{{ t "entry.status.unread" }}{{ else }}{{ t "entry.status.read" }}{{ end }}</span></a>
+        </li>
+        <li class="item-meta-icons-star">
+            <a href="#"
+                data-toggle-bookmark="true"
+                data-bookmark-url="{{ route "toggleBookmark" "entryID" .entry.ID }}"
+                data-label-loading="{{ t "entry.state.saving" }}"
+                data-label-star="{{ t "entry.bookmark.toggle.on" }}"
+                data-label-unstar="{{ t "entry.bookmark.toggle.off" }}"
+                data-value="{{ if .entry.Starred }}star{{ else }}unstar{{ end }}"
+                >{{ if .entry.Starred }}{{ icon "unstar" }}{{ else }}{{ icon "star" }}{{ end }}<span class="icon-label">{{ if .entry.Starred }}{{ t "entry.bookmark.toggle.off" }}{{ else }}{{ t "entry.bookmark.toggle.on" }}{{ end }}</span></a>
+        </li>
+        {{ if .entry.ShareCode }}
+            <li class="item-meta-icons-share">
+                <a href="{{ route "sharedEntry" "shareCode" .entry.ShareCode }}"
+                    title="{{ t "entry.shared_entry.title" }}"
+                    target="_blank">{{ icon "share" }}<span class="icon-label">{{ t "entry.shared_entry.label" }}</span></a>
+            </li>
+            <li class="item-meta-icons-delete">
+                <a href="#"
+                    data-confirm="true"
+                    data-url="{{ route "unshareEntry" "entryID" .entry.ID }}"
+                    data-label-question="{{ t "confirm.question" }}"
+                    data-label-yes="{{ t "confirm.yes" }}"
+                    data-label-no="{{ t "confirm.no" }}"
+                    data-label-loading="{{ t "confirm.loading" }}">{{ icon "delete" }}<span class="icon-label">{{ t "entry.unshare.label" }}</span></a>
+            </li>
+        {{ end }}
+        {{ if .hasSaveEntry }}
+            <li>
+                <a href="#"
+                    title="{{ t "entry.save.title" }}"
+                    data-save-entry="true"
+                    data-save-url="{{ route "saveEntry" "entryID" .entry.ID }}"
+                    data-label-loading="{{ t "entry.state.saving" }}"
+                    data-label-done="{{ t "entry.save.completed" }}"
+                    >{{ icon "save" }}<span class="icon-label">{{ t "entry.save.label" }}</span></a>
+            </li>
+        {{ end }}
+        <li class="item-meta-icons-external-url">
+            <a href="{{ .entry.URL | safeURL  }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                referrerpolicy="no-referrer"
+                data-original-link="{{ .user.MarkReadOnView }}">{{ icon "external-link" }}<span class="icon-label">{{ t "entry.external_link.label" }}</span></a>
+        </li>
+        {{ if .entry.CommentsURL }}
+            <li class="item-meta-icons-comments">
+                <a href="{{ .entry.CommentsURL | safeURL  }}"
+                    title="{{ t "entry.comments.title" }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    referrerpolicy="no-referrer"
+                    data-comments-link="true">{{ icon "comment" }}<span class="icon-label">{{ t "entry.comments.label" }}</span></a>
+            </li>
+        {{ end }}
+        <li class="item-meta-icons-external-url">
+            <a href="{{ .entry.URL | safeURL  }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                referrerpolicy="no-referrer"
+                data-original-link="{{ .user.MarkReadOnView }}">{{ icon "external-link" }}<span class="icon-label">Embed</span></a>
+        </li>
+        <li>
+            <a href="#"
+                title="{{ t "entry.scraper.title" }}"
+                data-fetch-content-entry="true"
+                data-fetch-content-url="{{ route "fetchContent" "entryID" .entry.ID }}"
+                data-label-loading="{{ t "entry.state.loading" }}"
+                >{{ icon "scraper" }}<span class="icon-label">{{ t "entry.scraper.label" }}</span></a>
+        </li>
+    </ul>
+</div>
+{{ end }}

@@ -26,6 +26,36 @@ var (
 )
 
 func FindSubscriptions(websiteURL, userAgent, cookie, username, password string, fetchViaProxy, allowSelfSignedCertificates bool, rssbridgeURL string) (Subscriptions, *locale.LocalizedErrorWrapper) {
+	if rssbridgeURL != "" {
+		slog.Debug("Trying to detect feeds using RSS-Bridge",
+			slog.String("website_url", websiteURL),
+			slog.String("rssbridge_url", rssbridgeURL),
+		)
+
+		bridges, err := rssbridge.DetectBridges(rssbridgeURL, websiteURL)
+		if err != nil {
+			return nil, locale.NewLocalizedErrorWrapper(err, "error.unable_to_detect_rssbridge", err)
+		}
+
+		slog.Debug("RSS-Bridge results",
+			slog.String("website_url", websiteURL),
+			slog.String("rssbridge_url", rssbridgeURL),
+			slog.Int("nb_bridges", len(bridges)),
+		)
+
+		if len(bridges) > 0 {
+			var subscriptions Subscriptions
+			for _, bridge := range bridges {
+				subscriptions = append(subscriptions, &Subscription{
+					Title: bridge.BridgeMeta.Name,
+					URL:   bridge.URL,
+					Type:  "atom",
+				})
+			}
+			return subscriptions, nil
+		}
+	}
+
 	websiteURL = findYoutubeChannelFeed(websiteURL)
 	websiteURL = parseYoutubeVideoPage(websiteURL)
 
@@ -66,36 +96,6 @@ func FindSubscriptions(websiteURL, userAgent, cookie, username, password string,
 	subscriptions, localizedError := parseWebPage(responseHandler.EffectiveURL(), bytes.NewReader(responseBody))
 	if localizedError != nil || subscriptions != nil {
 		return subscriptions, localizedError
-	}
-
-	if rssbridgeURL != "" {
-		slog.Debug("Trying to detect feeds using RSS-Bridge",
-			slog.String("website_url", websiteURL),
-			slog.String("rssbridge_url", rssbridgeURL),
-		)
-
-		bridges, err := rssbridge.DetectBridges(rssbridgeURL, websiteURL)
-		if err != nil {
-			return nil, locale.NewLocalizedErrorWrapper(err, "error.unable_to_detect_rssbridge", err)
-		}
-
-		slog.Debug("RSS-Bridge results",
-			slog.String("website_url", websiteURL),
-			slog.String("rssbridge_url", rssbridgeURL),
-			slog.Int("nb_bridges", len(bridges)),
-		)
-
-		if len(bridges) > 0 {
-			var subscriptions Subscriptions
-			for _, bridge := range bridges {
-				subscriptions = append(subscriptions, &Subscription{
-					Title: bridge.BridgeMeta.Name,
-					URL:   bridge.URL,
-					Type:  "atom",
-				})
-			}
-			return subscriptions, nil
-		}
 	}
 
 	return tryWellKnownUrls(websiteURL, userAgent, cookie, username, password, fetchViaProxy, allowSelfSignedCertificates)

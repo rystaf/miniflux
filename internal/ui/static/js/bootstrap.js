@@ -123,4 +123,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (element.dataset.lastPosition){ element.currentTime = element.dataset.lastPosition; }
         element.ontimeupdate = () => handlePlayerProgressionSave(element);
     });
+
+    onClick("a[href] > img", (event) => handleImgLink(event.target));
 });

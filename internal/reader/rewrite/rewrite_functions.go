@@ -208,8 +208,8 @@ func useNoScriptImages(entryURL, entryContent string) string {
 func addYoutubeVideo(entryURL, entryContent string) string {
 	matches := youtubeRegex.FindStringSubmatch(entryURL)
 
-	if len(matches) == 2 {
-		video := `<iframe width="650" height="350" frameborder="0" src="` + config.Opts.YouTubeEmbedUrlOverride() + matches[1] + `" allowfullscreen></iframe>`
+	if len(matches) == 2 && !strings.HasPrefix(entryContent, `<a href="https://www.youtube.com/`) {
+		video := `<a href="` + matches[0] + `"><img src="https://img.youtube.com/vi/` + matches[1] + `/0.jpg"></a>`
 		return video + `<br>` + entryContent
 	}
 	return entryContent

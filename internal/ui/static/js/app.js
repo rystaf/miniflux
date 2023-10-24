@@ -689,3 +689,17 @@ function checkShareAPI(title, url) {
         window.location.reload();
     }
 }
+
+/**
+ * replace youtube image links with embed player
+ * @param {Element} imgElement
+ */
+function handleImgLink(imgElement) {
+  let [,id] = imgElement.parentElement.href.match(/youtube\.com\/watch\?v=(.*)/)
+  if (id) {
+		imgElement.parentElement.outerHTML = `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1" allowfullscreen></iframe>`
+    imgElement.preventDefault();
+    return false;
+  }
+}
+

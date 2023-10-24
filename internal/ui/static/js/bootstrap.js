@@ -156,5 +156,5 @@ document.addEventListener("DOMContentLoaded", () => {
         element.ontimeupdate = () => handlePlayerProgressionSave(element);
     });
 
-    onClick("a[href] > img", (event) => handleImgLink(event.target));
+    onClick("article img", (event) => handleImgClick(event.target));
 });

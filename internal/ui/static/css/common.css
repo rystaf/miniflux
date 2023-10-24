@@ -867,14 +867,15 @@ article.category-has-unread {
 }
 
 .items article {
+  resize: vertical;
   max-height: 380px;
   overflow: scroll;
   position: relative;
 }
-
-.items article img, .items article video{
-  max-height: 80%;
+.items article[style*="height"] {
+  max-height: unset;
 }
+
 .items article figure img {
   flex-grow: 1;
 }

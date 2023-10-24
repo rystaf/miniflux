@@ -155,4 +155,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         element.ontimeupdate = () => handlePlayerProgressionSave(element);
     });
+
+    onClick("article img", (event) => handleImgClick(event.target));
 });

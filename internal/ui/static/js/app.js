@@ -698,3 +698,22 @@ function getCsrfToken() {
 
     return "";
 }
+
+/**
+ * replace youtube image links with embed player
+ * @param {Element} imgElement
+ */
+function handleImgClick(imgElement) {
+  let [,ytid] = imgElement.parentElement?.href?.match(/youtube\.com\/watch\?v=(.*)/) || []
+  if (ytid) {
+		imgElement.parentElement.outerHTML = `<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/${ytid}?autoplay=1" allowfullscreen></iframe>`
+    imgElement.preventDefault();
+    return false;
+  }
+
+  let [,tid] = DomHelper.findParent(imgElement, "item").querySelector('.item-meta-icons-external-url a').href.match(/twitter\.com\/.+\/(\d+)/)
+  if (tid) {
+		imgElement.outerHTML = `<iframe width="650" height="350" frameborder="0" src="https://farside.link/nitter/i/videos/tweet/${tid}" allowfullscreen></iframe>`
+  }
+}
+

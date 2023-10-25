@@ -51,16 +51,15 @@ type Feed struct {
 	FetchViaProxy               bool      `json:"fetch_via_proxy"`
 	HideGlobally                bool      `json:"hide_globally"`
 	AppriseServiceURLs          string    `json:"apprise_service_urls"`
+	IconURL                     string    `json:"icon_url"`
 
 	// Non persisted attributes
-	Category *Category `json:"category,omitempty"`
-	Icon     *FeedIcon `json:"icon"`
-	Entries  Entries   `json:"entries,omitempty"`
-
-	TTL         int    `json:"-"`
-	IconURL     string `json:"-"`
-	UnreadCount int    `json:"-"`
-	ReadCount   int    `json:"-"`
+	Category    *Category `json:"category,omitempty"`
+	Icon        *FeedIcon `json:"icon"`
+	Entries     Entries   `json:"entries,omitempty"`
+	TTL         int       `json:"-"`
+	UnreadCount int       `json:"-"`
+	ReadCount   int       `json:"-"`
 }
 
 type FeedCounters struct {

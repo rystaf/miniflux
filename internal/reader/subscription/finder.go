@@ -74,6 +74,20 @@ func (f *SubscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string) 
 		return Subscriptions{NewSubscription(responseHandler.EffectiveURL(), responseHandler.EffectiveURL(), feedFormat)}, nil
 	}
 
+	// Step 5) Check if the website URL can use RSS-Bridge.
+	if rssBridgeURL != "" {
+		slog.Debug("Try to detect feeds with RSS-Bridge", slog.String("website_url", websiteURL))
+		subscriptions, localizedError := f.FindSubscriptionsFromRSSBridge(websiteURL, rssBridgeURL)
+		if localizedError != nil {
+			return nil, localizedError
+		}
+
+		if len(subscriptions) > 0 {
+			slog.Debug("Subscriptions found from RSS-Bridge", slog.String("website_url", websiteURL), slog.Any("subscriptions", subscriptions))
+			return subscriptions, nil
+		}
+	}
+
 	// Step 2) Check if the website URL is a YouTube channel.
 	slog.Debug("Try to detect feeds from YouTube channel page", slog.String("website_url", websiteURL))
 	subscriptions, localizedError := f.FindSubscriptionsFromYouTubeChannelPage(websiteURL)
@@ -111,20 +125,6 @@ func (f *SubscriptionFinder) FindSubscriptions(websiteURL, rssBridgeURL string) 
 	if len(subscriptions) > 0 {
 		slog.Debug("Subscriptions found from web page", slog.String("website_url", websiteURL), slog.Any("subscriptions", subscriptions))
 		return subscriptions, nil
-	}
-
-	// Step 5) Check if the website URL can use RSS-Bridge.
-	if rssBridgeURL != "" {
-		slog.Debug("Try to detect feeds with RSS-Bridge", slog.String("website_url", websiteURL))
-		subscriptions, localizedError := f.FindSubscriptionsFromRSSBridge(websiteURL, rssBridgeURL)
-		if localizedError != nil {
-			return nil, localizedError
-		}
-
-		if len(subscriptions) > 0 {
-			slog.Debug("Subscriptions found from RSS-Bridge", slog.String("website_url", websiteURL), slog.Any("subscriptions", subscriptions))
-			return subscriptions, nil
-		}
 	}
 
 	// Step 6) Check if the website has a known feed URL.

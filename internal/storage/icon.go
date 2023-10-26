@@ -111,7 +111,7 @@ func (s *Storage) CreateFeedIcon(feedID int64, icon *model.Icon) error {
 	if err != nil {
 		return fmt.Errorf(`store: unable to create feed icon: %v`, err)
 	}
-	_, err = s.db.Exec(`UPDATE feed SET icon_url=$1 WHERE ID=$2)`, icon.URL, feedID)
+	_, err = s.db.Exec(`UPDATE feeds SET icon_url=$1 WHERE ID=$2`, icon.URL, feedID)
 	if err != nil {
 		return fmt.Errorf(`store: unable to save icon_url: %v`, err)
 	}

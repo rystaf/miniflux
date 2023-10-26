@@ -867,6 +867,10 @@ article.category-has-unread {
   float: right;
 }
 
+.items .item-status-unread {
+  border-color: var(--link-color);
+}
+
 .items article {
   resize: vertical;
   max-height: 380px;

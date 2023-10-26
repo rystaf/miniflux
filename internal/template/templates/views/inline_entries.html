@@ -5,9 +5,9 @@
 {{ if not .entries }}
     <p class="alert">{{ t "alert.no_unread_entry" }}</p>
 {{ else }}
-    <div class="items hide-read-items">
+    <div class="items">
         {{ range .entries }}
-        <div class="item entry-item {{ if $.user.EntrySwipe }}entry-swipe{{ end }}" data-id="{{ .ID }}">
+        <div class="item entry-item {{ if $.user.EntrySwipe }}entry-swipe{{ end }} item-status-{{ .Status }}" data-id="{{ .ID }}">
             {{ template "item_content" dict "user" $.user "entry" . "hasSaveEntry" $.hasSaveEntry  }}
         </div>
         {{ end }}

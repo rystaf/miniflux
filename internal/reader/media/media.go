@@ -77,10 +77,11 @@ type Group struct {
 
 // Content represents a XML element "media:content".
 type Content struct {
-	URL      string `xml:"url,attr"`
-	Type     string `xml:"type,attr"`
-	FileSize string `xml:"fileSize,attr"`
-	Medium   string `xml:"medium,attr"`
+	URL         string `xml:"url,attr"`
+	Type        string `xml:"type,attr"`
+	FileSize    string `xml:"fileSize,attr"`
+	Medium      string `xml:"medium,attr"`
+	Description string `xml:"http://search.yahoo.com/mrss/ description"`
 }
 
 // MimeType returns the attachment mime type.

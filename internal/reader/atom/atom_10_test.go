@@ -1389,7 +1389,9 @@ func TestParseMediaElements(t *testing.T) {
 			<updated>2005-07-15T12:00:00Z</updated>
 			<link href="http://www.example.org/entries/1" />
 			<media:title>Another title</media:title>
-			<media:content url="https://www.youtube.com/v/abcd" type="application/x-shockwave-flash" width="640" height="390"/>
+			<media:content url="https://www.youtube.com/v/abcd" type="application/x-shockwave-flash" width="640" height="390">
+				<media:description>abcd description</media:description>
+			</media:content>
 			<media:thumbnail url="https://example.org/thumbnail.jpg" width="480" height="360"/>
 			<media:description>Some description
 A website: http://example.org/</media:description>
@@ -1418,12 +1420,13 @@ A website: http://example.org/</media:description>
 	}
 
 	expectedResults := []struct {
-		url      string
-		mimeType string
-		size     int64
+		url         string
+		mimeType    string
+		size        int64
+		description string
 	}{
-		{"https://example.org/thumbnail.jpg", "image/*", 0},
-		{"https://www.youtube.com/v/abcd", "application/x-shockwave-flash", 0},
+		{"https://example.org/thumbnail.jpg", "image/*", 0, ""},
+		{"https://www.youtube.com/v/abcd", "application/x-shockwave-flash", 0, "abcd description"},
 	}
 
 	for index, enclosure := range feed.Entries[0].Enclosures {
@@ -1438,6 +1441,11 @@ A website: http://example.org/</media:description>
 		if expectedResults[index].size != enclosure.Size {
 			t.Errorf(`Unexpected enclosure size, got %d instead of %d`, enclosure.Size, expectedResults[index].size)
 		}
+
+		if expectedResults[index].description != enclosure.Description {
+			t.Errorf(`Unexpected enclosure description, got %s instead of %s`, enclosure.Description, expectedResults[index].description)
+		}
+
 	}
 }
 

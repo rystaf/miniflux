@@ -13,6 +13,7 @@ type Enclosure struct {
 	MimeType         string `json:"mime_type"`
 	Size             int64  `json:"size"`
 	MediaProgression int64  `json:"media_progression"`
+	Description      string `json:"description"`
 }
 
 // Html5MimeType will modify the actual MimeType to allow direct playback from HTML5 player for some kind of MimeType

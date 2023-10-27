@@ -389,9 +389,10 @@ func (r *rssItem) entryEnclosures() model.EnclosureList {
 		if _, found := duplicates[mediaContent.URL]; !found {
 			duplicates[mediaContent.URL] = true
 			enclosures = append(enclosures, &model.Enclosure{
-				URL:      mediaContent.URL,
-				MimeType: mediaContent.MimeType(),
-				Size:     mediaContent.Size(),
+				URL:         mediaContent.URL,
+				MimeType:    mediaContent.MimeType(),
+				Size:        mediaContent.Size(),
+				Description: mediaContent.Description,
 			})
 		}
 	}

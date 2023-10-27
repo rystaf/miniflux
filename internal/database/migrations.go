@@ -814,4 +814,11 @@ var migrations = []func(tx *sql.Tx) error{
 		_, err = tx.Exec(sql)
 		return err
 	},
+	func(tx *sql.Tx) (err error) {
+		sql := `
+			ALTER TABLE enclosures ADD COLUMN description text default '';
+		`
+		_, err = tx.Exec(sql)
+		return err
+	},
 }

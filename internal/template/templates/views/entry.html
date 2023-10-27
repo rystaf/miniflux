@@ -242,14 +242,15 @@
                 {{ else if hasPrefix .MimeType "image/" }}
                     <div class="enclosure-image">
                         {{ if (and $.user (mustBeProxyfied "image")) }}
-                            <img src="{{ proxyURL .URL }}" title="{{ .URL }} ({{ .MimeType }})" loading="lazy" alt="{{ .URL }} ({{ .MimeType }})">
+                            <img src="{{ proxyURL .URL }}" title="{{ .Description }}" alt="{{ .Description }}" loading="lazy" >
                         {{ else }}
-                            <img src="{{ .URL | safeURL }}" title="{{ .URL }} ({{ .MimeType }})" loading="lazy" alt="{{ .URL }} ({{ .MimeType }})">
+                            <img src="{{ .URL | safeURL }}" title="{{ .Description }}" alt="{{ .Description }}" loading="lazy" >
                         {{ end }}
                     </div>
                 {{ end }}
 
                 <div class="entry-enclosure-download">
+                    <p>{{ .Description }}</p>
                     <a href="{{ .URL | safeURL }}" title="{{ t "action.download" }}{{ if gt .Size 0 }} - {{ formatFileSize .Size }}{{ end }} ({{ .MimeType }})" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">{{ .URL | safeURL  }}</a>
                     <small>{{ if gt .Size 0 }} - <strong>{{ formatFileSize .Size }}</strong>{{ end }}</small>
                 </div>

@@ -21,7 +21,8 @@ func (s *Storage) GetEnclosures(entryID int64) (model.EnclosureList, error) {
 			url,
 			size,
 			mime_type,
-		    media_progression
+			media_progression,
+			description
 		FROM
 			enclosures
 		WHERE
@@ -46,6 +47,7 @@ func (s *Storage) GetEnclosures(entryID int64) (model.EnclosureList, error) {
 			&enclosure.Size,
 			&enclosure.MimeType,
 			&enclosure.MediaProgression,
+			&enclosure.Description,
 		)
 
 		if err != nil {
@@ -67,7 +69,8 @@ func (s *Storage) GetEnclosure(enclosureID int64) (*model.Enclosure, error) {
 			url,
 			size,
 			mime_type,
-		    media_progression
+			media_progression,
+			description
 		FROM
 			enclosures
 		WHERE
@@ -86,6 +89,7 @@ func (s *Storage) GetEnclosure(enclosureID int64) (*model.Enclosure, error) {
 		&enclosure.Size,
 		&enclosure.MimeType,
 		&enclosure.MediaProgression,
+		&enclosure.Description,
 	)
 
 	if err != nil {
@@ -103,9 +107,9 @@ func (s *Storage) createEnclosure(tx *sql.Tx, enclosure *model.Enclosure) error 
 
 	query := `
 		INSERT INTO enclosures
-			(url, size, mime_type, entry_id, user_id, media_progression)
+			(url, size, mime_type, entry_id, user_id, media_progression, description)
 		VALUES
-			($1, $2, $3, $4, $5, $6)
+			($1, $2, $3, $4, $5, $6, $7)
 		ON CONFLICT (user_id, entry_id, md5(url)) DO NOTHING
 		RETURNING
 			id
@@ -118,6 +122,7 @@ func (s *Storage) createEnclosure(tx *sql.Tx, enclosure *model.Enclosure) error 
 		enclosure.EntryID,
 		enclosure.UserID,
 		enclosure.MediaProgression,
+		enclosure.Description,
 	).Scan(&enclosure.ID); err != nil && err != sql.ErrNoRows {
 		return fmt.Errorf(`store: unable to create enclosure: %w`, err)
 	}
@@ -169,9 +174,10 @@ func (s *Storage) UpdateEnclosure(enclosure *model.Enclosure) error {
 			mime_type=$3,
 			entry_id=$4, 
 			user_id=$5, 
-			media_progression=$6
+			media_progression=$6,
+			description=$7
 		WHERE
-			id=$7
+			id=$8
 	`
 	_, err := s.db.Exec(query,
 		enclosure.URL,
@@ -180,6 +186,7 @@ func (s *Storage) UpdateEnclosure(enclosure *model.Enclosure) error {
 		enclosure.EntryID,
 		enclosure.UserID,
 		enclosure.MediaProgression,
+		enclosure.Description,
 		enclosure.ID,
 	)
 

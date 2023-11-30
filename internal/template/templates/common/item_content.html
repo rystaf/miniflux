@@ -3,7 +3,7 @@
         <div class="entry-meta" dir="auto">
             {{ if and .user (ne .entry.Feed.Icon.IconID 0) }}
                 <div>
-                    <img src="{{ route "icon" "iconID" .entry.Feed.Icon.IconID }}" width="64" height="64" loading="lazy" alt="{{ .entry.Feed.Title }}">
+                    <img src="{{ route "icon" "iconID" .entry.Feed.Icon.IconID }}" width="64" loading="lazy" alt="{{ .entry.Feed.Title }}">
                 </div>
             {{ end }}
             <div>

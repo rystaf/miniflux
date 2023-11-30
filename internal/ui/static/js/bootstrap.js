@@ -157,4 +157,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     onClick("article img", (event) => handleImgClick(event.target));
+    onClick("#fullpage", (event) => event.target.style.display='none');
 });

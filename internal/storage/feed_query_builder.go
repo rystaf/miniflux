@@ -255,6 +255,7 @@ func (f *FeedQueryBuilder) GetFeeds() (model.Feeds, error) {
 			}
 		}
 
+		feed.NumberOfVisibleEntries = feed.ReadCount + feed.UnreadCount
 		feed.CheckedAt = timezone.Convert(tz, feed.CheckedAt)
 		feed.NextCheckAt = timezone.Convert(tz, feed.NextCheckAt)
 		feed.Category.UserID = feed.UserID

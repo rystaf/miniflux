@@ -711,15 +711,6 @@ function handleImgClick(imgElement) {
     return false;
   }
 
-  let item = DomHelper.findParent(imgElement, "item")
-  if (item != null) {
-    let [,tid] = item.querySelector('.item-meta-icons-external-url a').href.match(/twitter\.com\/.+\/(\d+)/) || []
-    if (tid) {
-      imgElement.outerHTML = `<iframe width="650" height="350" frameborder="0" src="https://farside.link/nitter/i/videos/tweet/${tid}" allowfullscreen></iframe>`
-      return false
-    }
-  }
-
   if (DomHelper.findParent(imgElement, 'entry-content') != null) {
     const fullPage = document.querySelector('#fullpage');
     if (!fullPage) {

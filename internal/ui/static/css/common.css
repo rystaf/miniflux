@@ -758,6 +758,10 @@ li.pagination-next, li.pagination-prev {
     margin-right: 0;
 }
 
+.item-meta-icons-maximize {
+    float: right;
+}
+
 .items {
     overflow-x: hidden;
     touch-action: pan-y;

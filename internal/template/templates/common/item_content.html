@@ -110,8 +110,8 @@
                 data-label-loading="{{ t "entry.state.saving" }}"
                 data-label-read="{{ t "entry.status.read" }}"
                 data-label-unread="{{ t "entry.status.unread" }}"
-                data-value="{{ if eq .entry.Status "read" }}read{{ else }}unread{{ end }}"
-                >{{ if eq .entry.Status "read" }}{{ icon "unread" }}{{ else }}{{ icon "read" }}{{ end }}<span class="icon-label">{{ if eq .entry.Status "read" }}{{ t "entry.status.unread" }}{{ else }}{{ t "entry.status.read" }}{{ end }}</span></a>
+                data-value="read"
+                >{{ icon "unread" }}<span class="icon-label">{{ t "entry.status.unread" }}</span></a>
         </li>
         <li class="item-meta-icons-star">
             <a href="#"
@@ -181,6 +181,12 @@
                 data-fetch-content-url="{{ route "fetchContent" "entryID" .entry.ID }}"
                 data-label-loading="{{ t "entry.state.loading" }}"
                 >{{ icon "scraper" }}<span class="icon-label">{{ t "entry.scraper.label" }}</span></a>
+        </li>
+        <li class="item-meta-icons-maximize">
+            <a href="#"
+                title="Expand"
+                data-maximize="true"
+                >{{ icon "maximize" }}<span class="icon-label">Expand</span></a>
         </li>
     </ul>
 </div>

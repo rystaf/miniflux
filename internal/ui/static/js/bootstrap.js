@@ -86,6 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
     onClick("a[data-share-status]", () => handleShare());
     onClick("a[data-action=markPageAsRead]", (event) => handleConfirmationMessage(event.target, () => markPageAsRead()));
     onClick("a[data-toggle-status]", (event) => handleEntryStatus("next", event.target));
+    onClick("a[data-maximize]", (event) => handleMaximizeItem(event.target));
 
     onClick("a[data-confirm]", (event) => handleConfirmationMessage(event.target, (url, redirectURL) => {
         let request = new RequestBuilder(url);

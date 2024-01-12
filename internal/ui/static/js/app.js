@@ -730,3 +730,18 @@ function handleImgClick(imgElement) {
   }
 }
 
+function handleMaximizeItem(e){
+  console.log(e)
+  let item = DomHelper.findParent(e, 'item')
+  item.scrollIntoView()
+  let style = item.querySelector('article.entry-content').style
+  if (style.height) {
+    style.height = ""
+    e.innerHTML = "Expand"
+  } else {
+    style.height = "calc(100vh - 88px)"
+    e.innerHTML = "Restore"
+  }
+  console.log(article)
+}
+

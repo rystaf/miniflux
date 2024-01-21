@@ -739,7 +739,7 @@ function handleMaximizeItem(e){
     style.height = ""
     e.innerHTML = "Expand"
   } else {
-    style.height = "calc(100vh - 88px)"
+    style.maxHeight = "calc(100vh - 88px)"
     e.innerHTML = "Restore"
   }
   console.log(article)
